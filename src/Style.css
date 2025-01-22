@@ -18456,4 +18456,24 @@ section.product-details img {
     font-weight: bold;
 }
 
+
+
+.pro-details-wishlist button {
+    border: none;
+    background: transparent;
+}
+
+.pro-details-wishlist button i.fa.fa-heart-o {
+    font-size: 20px;
+}
+
+.pro-details-wishlist button i.fa.fa-heart-o.whi {
+    background: cadetblue;
+}
+
+.pro-details-wishlist button i.fa.fa-heart.whi {
+    color: red;
+    font-size: 20px;
+}
+
 /* eND */

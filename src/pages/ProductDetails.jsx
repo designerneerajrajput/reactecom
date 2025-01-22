@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { addCart } from '../redux/Slice';
+import { addCart, addtoCheck } from '../redux/Slice';
+import { addWishlist } from '../redux/Whislist';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
@@ -9,12 +10,41 @@ function ProductDetails() {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [selectQty, setSelectQty] = useState(1)
+    const [selectQty, setSelectQty] = useState(1);
+    const [isAdded, setIsAdded] = useState(false);
+
+
+    const [wishlistStatus, setWishlistStatus] = useState(false);
 
 
     const dispatch = useDispatch();
+    const handleWishlist = () => {
+        setWishlistStatus(!wishlistStatus);
+        //if (wishlistStatus) {
+        const productToWishlist = {
+            id: product.id,
+            title: product.title,
+            price: product.price,
+            image: product.image,
+            quantity: 1,
+        };
+        dispatch(addWishlist(productToWishlist));
+        //} else {
+        // const productToWishlist = {
+        //     id: product.id,
+        //     title: product.title,
+        //     price: product.price,
+        //     image: product.image,
+        //     quantity: 1,
+        // };
+        // dispatch(addWishlist(productToWishlist));
+        // }
+
+    };
+
 
     useEffect(() => {
+        setLoading(true);
         axios.get(`https://fakestoreapi.com/products/${id}`)
             .then(res => {
                 setProduct(res.data);
@@ -26,12 +56,10 @@ function ProductDetails() {
             });
     }, [id]);
 
-    if (loading) return <p>Loading...</p>;
-    if (!product) return <p>Product not found.</p>;
-
     const handleAddToCart = (e) => {
         e.preventDefault();
 
+        setIsAdded(true);
         setTimeout(() => {
             setIsAdded(false);
         }, 1000);
@@ -46,19 +74,16 @@ function ProductDetails() {
         dispatch(addCart(productToAdd));
     };
 
-
-
-
-
     const updateQty = (type) => {
-        if (type == 1 && selectQty > 1) {
+        if (type === 1 && selectQty > 1) {
             setSelectQty(selectQty - 1);
-        } else if (type == 2) {
+        } else if (type === 2) {
             setSelectQty(selectQty + 1);
         }
+    };
 
-    }
-
+    if (loading) return <p>Loading...</p>;
+    if (!product) return <p>Product not found.</p>;
 
     return (
         <section className="product-details">
@@ -71,7 +96,7 @@ function ProductDetails() {
                         <div className="product-details-content">
                             <h2>{product.title}</h2>
                             <div className="product-details-price">
-                                <span>$ {product.price.toFixed(2)} </span>
+                                <span>$ {product.price.toFixed(2)}</span>
                             </div>
                             <div className="pro-details-rating-wrap">
                                 <div className="pro-details-rating">
@@ -91,22 +116,33 @@ function ProductDetails() {
 
                             <div className="pro-details-quality">
                                 <td className="product-quantity">
-                                    <div className="dec qtybutton" onClick={() => updateQty(1)}>-</div>
+                                    <div
+                                        className="dec qtybutton"
+                                        onClick={() => updateQty(1)}
+                                        disabled={selectQty <= 1}
+                                    >
+                                        -
+                                    </div>
                                     <input
                                         className="cart-plus-minus-box"
                                         type="text"
                                         value={selectQty}
                                         readOnly
                                     />
-                                    <div className="inc qtybutton" onClick={() => updateQty(2)}>+</div>
+                                    <div className="inc qtybutton" onClick={() => updateQty(2)}>
+                                        +
+                                    </div>
                                 </td>
                                 <div className="pro-details-cart btn-hover">
                                     <Link title="Add To Cart" onClick={handleAddToCart}>
-                                        <i className="pe-7s-cart"></i>Add to cart
+                                        <i className="pe-7s-cart"></i>
+                                        {isAdded ? "Added!" : "Add to cart"}
                                     </Link>
                                 </div>
                                 <div className="pro-details-wishlist">
-                                    <a href="#"><i className="fa fa-heart-o"></i></a>
+
+
+                                    <button onClick={handleWishlist}><i className={!wishlistStatus ? 'fa fa-heart-o' : 'fa fa-heart whi'}></i></button>
                                 </div>
                                 <div className="pro-details-compare">
                                     <a href="#"><i className="pe-7s-shuffle"></i></a>

@@ -309,8 +309,8 @@ function Checkout() {
                                     </div>
                                 </div>
                                 {/* Place Order Button */}
-                                <div className="place-order mt-25">
-                                    <a className="btn-hover" href="#">
+                                <div className="Place-order mt-25">
+                                    <a className="btn-hover btn-hover checkout-btn" href="#">
                                         Place Order
                                     </a>
                                 </div>
